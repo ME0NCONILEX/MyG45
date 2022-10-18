@@ -1,5 +1,5 @@
 package week2.strings;
-//Strings - lengtth of
+//Strings - length of
 public class v2Exer0s {
     public static void main(String[] args) {
         String txt = "Java";
