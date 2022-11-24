@@ -1,4 +1,4 @@
-package part3.main.java.model;
+package part3.main.java.Model;
 import java.util.Objects;
 
 public class AppUser {
@@ -107,4 +107,5 @@ public class AppUser {
                 '}';
     }
 
+    public Object getUsername() { return null; }
 }
