@@ -1,3 +1,0 @@
-# Lambda practice
-
-* exercises
