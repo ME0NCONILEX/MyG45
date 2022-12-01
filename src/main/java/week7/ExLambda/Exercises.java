@@ -1,9 +1,13 @@
 package week7.ExLambda;
 
 import week7.ExLambda.data.DataStorage;
+import week7.ExLambda.model.Gender;
+import week7.JavaUtilFunc.tutor.UtilFunc.Model.Person;
 
-import java.util.Arrays;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.Comparator;
+import java.util.Objects;
 
 public class Exercises {
 
@@ -16,11 +20,9 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise1
-        List<String> names = Arrays.asList("Niklas", "Erik","Joel","Erik", "Inger", "Johan");
-        List<String>  filteredName = (List<String>) names.stream()
-                        .filter(name ->findMany("Erik"));
+        storage.findMany(p-> p.getFirstName().equals("Erik") ).forEach(System.out::println);
         System.out.println("----------------------");
-        filteredName.forEach(System.out::println);
+
     }
 
     private static boolean findMany(String erik) {
@@ -35,7 +37,7 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise2
-
+        storage.findMany(person -> Objects.equals(person.getGender(), Gender.FEMALE)).forEach(System.out::println);
         System.out.println("----------------------");
     }
 
@@ -46,7 +48,7 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise3
-
+        storage.findMany(person -> person.getBirthDate().isAfter(LocalDate.parse("1999-12-31"))).forEach(System.out::println);
         System.out.println("----------------------");
     }
 
@@ -57,7 +59,7 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise4
-
+        System.out.println(storage.findOne(p -> p.getId() == 123));
         System.out.println("----------------------");
 
     }
@@ -70,8 +72,13 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise5
-
         System.out.println("----------------------");
+        System.out.println(
+                storage.findOneAndMapToString(
+                        person -> person.getId() == 456,
+                        person -> "Name: " + person.getFirstName() + " " + person.getLastName() + " born " + person.getBirthDate()
+                )
+        );
     }
 
     /*
@@ -82,6 +89,10 @@ public class Exercises {
         //Write your code here
         // TODO: exercise6
 
+        storage.findManyAndMapEachToString(
+                person -> Period.between(person.getBirthDate(), LocalDate.now()).getYears() < 10,
+                person -> person.getFirstName() + " " + person.getLastName() + " " + Period.between(person.getBirthDate(), LocalDate.now()).getYears() + " years"
+        ).forEach(System.out::println);
         System.out.println("----------------------");
     }
 
@@ -93,7 +104,10 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise7
-
+        storage.findManyAndMapEachToString(
+                person -> Period.between(person.getBirthDate(), LocalDate.now()).getYears() < 10,
+                person -> person.getFirstName() + " " + person.getLastName() + " " + Period.between(person.getBirthDate(), LocalDate.now()).getYears() + " years"
+        ).forEach(System.out::println);
         System.out.println("----------------------");
     }
 
@@ -104,7 +118,10 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise8
-
+        storage.findAndDo(
+                person -> person.getFirstName().equals("Ulf"),
+                System.out::println
+        );
         System.out.println("----------------------");
     }
 
@@ -115,7 +132,10 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise9
-
+        storage.findAndDo(
+                person -> person.getLastName().toLowerCase().contains(person.getFirstName().toLowerCase()),
+                System.out::println
+        );
         System.out.println("----------------------");
     }
 
@@ -126,7 +146,10 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise10
-
+        storage.findAndDo(
+                person -> person.getFirstName().equalsIgnoreCase(new StringBuilder(person.getFirstName()).reverse().toString()),
+                person -> System.out.println(person.getFirstName() + " " + person.getLastName())
+        );
         System.out.println("----------------------");
     }
 
@@ -137,6 +160,12 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise11
+        for (week7.ExLambda.model.Person person1 : storage.findAndSort(
+                person -> person.getBirthDate().getYear() < 1950,
+                Comparator.comparing(Person::getBirthDate).reversed()
+        )) {
+            System.out.println(person1);
+        }
 
         System.out.println("----------------------");
     }
@@ -148,6 +177,10 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise12
+        storage.findAndSort(
+                person -> person.getBirthDate().getYear() < 1950,
+                Comparator.comparing(Person::getBirthDate).reversed()
+        ).forEach(System.out::println);
 
         System.out.println("----------------------");
     }
@@ -159,6 +192,31 @@ public class Exercises {
         System.out.println(message);
         //Write your code here
         // TODO: exercise13
+        //With Anonymous inner Class
+        Comparator<Person> compareLastName = new Comparator<Person>() {
+            @Override
+            public int compare(Person o1, Person o2) {
+                return o1.getLastName().compareTo(o2.getLastName());
+            }
+        };
+
+        //With Lambda
+        Comparator<Person> compareFirstName = (Person o1, Person o2) -> o1.getFirstName().compareTo(o2.getFirstName());
+
+        //With Method Reference
+        Comparator<Person> compareBirthDate = Comparator.comparing(Person::getBirthDate);
+
+        //Stack
+        Comparator<Person> all = compareLastName.thenComparing(compareFirstName).thenComparing(compareBirthDate);
+
+        storage.findAndSort(all).forEach(System.out::println);
+
+
+        /*
+        storage.findAndSort(
+                Comparator.comparing(Person::getLastName).thenComparing(Person::getFirstName).thenComparing(Person::getBirthDate)
+        ).forEach(System.out::println);
+        */
 
         System.out.println("----------------------");
     }
