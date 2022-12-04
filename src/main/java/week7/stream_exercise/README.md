@@ -1,5 +1,3 @@
-# II
-
-## Stream API
+# Stream API
 
 * Obs! Under construction!
