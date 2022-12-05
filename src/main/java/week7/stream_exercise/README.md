@@ -1,3 +1,3 @@
 # Stream API
 
-* (reworked)  OK!
+* (reworked)  OK! -> see g45_my_stream_exercise
